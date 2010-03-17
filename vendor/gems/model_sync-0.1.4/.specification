@@ -1,0 +1,73 @@
+--- !ruby/object:Gem::Specification 
+name: model_sync
+version: !ruby/object:Gem::Version 
+  prerelease: false
+  segments: 
+  - 0
+  - 1
+  - 4
+  version: 0.1.4
+platform: ruby
+authors: 
+- Anton Jenkins
+autorequire: 
+bindir: bin
+cert_chain: []
+
+date: 2009-07-20 00:00:00 +10:00
+default_executable: 
+dependencies: []
+
+description: Sync changes to an ActiveRecord model to another model
+email: info@pixellatedvisions.com
+executables: []
+
+extensions: []
+
+extra_rdoc_files: 
+- lib/model_sync.rb
+- README.rdoc
+files: 
+- lib/model_sync.rb
+- Rakefile
+- README.rdoc
+- Manifest
+- model_sync.gemspec
+has_rdoc: true
+homepage: http://github.com/antonjenkins/model_sync
+licenses: []
+
+post_install_message: 
+rdoc_options: 
+- --line-numbers
+- --inline-source
+- --title
+- Model_sync
+- --main
+- README.rdoc
+require_paths: 
+- lib
+required_ruby_version: !ruby/object:Gem::Requirement 
+  requirements: 
+  - - ">="
+    - !ruby/object:Gem::Version 
+      segments: 
+      - 0
+      version: "0"
+required_rubygems_version: !ruby/object:Gem::Requirement 
+  requirements: 
+  - - ">="
+    - !ruby/object:Gem::Version 
+      segments: 
+      - 1
+      - 2
+      version: "1.2"
+requirements: []
+
+rubyforge_project: model_sync
+rubygems_version: 1.3.6
+signing_key: 
+specification_version: 3
+summary: Sync changes to an ActiveRecord model to another model
+test_files: []
+
