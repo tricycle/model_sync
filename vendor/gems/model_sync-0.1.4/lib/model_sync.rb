@@ -38,9 +38,8 @@ module ModelSync
           # If we've received a create_{slave_model} call then create a new instance of it and sync to it
           new_instance = self.class.slave_model_class.new
           perform_sync(new_instance)
-          # Save the new instance so that its primary key is generated and pass this value onto our master model
+          new_instance.id = self.id
           new_instance.save
-          self.update_attribute(self.class.relationship.keys.first, new_instance.read_attribute(self.class.relationship.values.first.to_s))
         end
       when /^synch?ed_with_#{self.class.slave_model_name}\?$/
         !!find_slave_instance
