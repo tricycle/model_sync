@@ -26,6 +26,7 @@ module ModelSync
       if slave_instance = find_slave_instance
         # ... then sync the changes over
         perform_sync(slave_instance)
+        slave_instance.save
       end
     end
 
@@ -60,7 +61,7 @@ module ModelSync
     def perform_sync(slave_instance)
       # Update all the attributes which we've mapped
       self.class.mappings.each do |source, dest|
-        slave_instance.update_attribute(dest, self.read_attribute(source))
+        slave_instance.write_attribute(dest, self.read_attribute(source))
       end
       # Call the mapping_block if one is supplied
       self.class.mapping_block.call(self, slave_instance) if self.class.mapping_block
