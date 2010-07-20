@@ -18,6 +18,7 @@ module ModelSync
 
         # Add a callback to sync_changes on every save
         self.after_save :sync_changes
+        self.after_destroy :destroy_slave
       end
     end
 
@@ -53,7 +54,7 @@ module ModelSync
       # return nil if we don't have a value for the foreign key
       return nil unless foreign_key_value = self.read_attribute(self.class.relationship.keys.first)
       # find the instance of the slave class using the relationship hash
-      self.class.slave_model_class.find(:first, 
+      self.class.slave_model_class.find(:first,
                                         :conditions => "#{self.class.relationship.values.first.to_s} = #{foreign_key_value}")
     end
 
@@ -64,6 +65,11 @@ module ModelSync
       end
       # Call the mapping_block if one is supplied
       self.class.mapping_block.call(self, slave_instance) if self.class.mapping_block
+    end
+
+    def destroy_slave
+      return unless find_slave_instance
+      find_slave_instance.destroy
     end
   end
 end
