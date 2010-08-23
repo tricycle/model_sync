@@ -18,6 +18,7 @@ module ModelSync
 
         # Add a callback to sync_changes on every save
         self.after_save :sync_changes
+        self.after_destroy :destroy_slave
       end
     end
 
@@ -26,6 +27,7 @@ module ModelSync
       if slave_instance = find_slave_instance
         # ... then sync the changes over
         perform_sync(slave_instance)
+        slave_instance.save
       end
     end
 
@@ -37,9 +39,8 @@ module ModelSync
           # If we've received a create_{slave_model} call then create a new instance of it and sync to it
           new_instance = self.class.slave_model_class.new
           perform_sync(new_instance)
-          # Save the new instance so that its primary key is generated and pass this value onto our master model
+          new_instance.id = self.id
           new_instance.save
-          self.update_attribute(self.class.relationship.keys.first, new_instance.read_attribute(self.class.relationship.values.first.to_s))
         end
       when /^synch?ed_with_#{self.class.slave_model_name}\?$/
         !!find_slave_instance
@@ -53,17 +54,22 @@ module ModelSync
       # return nil if we don't have a value for the foreign key
       return nil unless foreign_key_value = self.read_attribute(self.class.relationship.keys.first)
       # find the instance of the slave class using the relationship hash
-      self.class.slave_model_class.find(:first, 
+      self.class.slave_model_class.find(:first,
                                         :conditions => "#{self.class.relationship.values.first.to_s} = #{foreign_key_value}")
     end
 
     def perform_sync(slave_instance)
       # Update all the attributes which we've mapped
       self.class.mappings.each do |source, dest|
-        slave_instance.update_attribute(dest, self.read_attribute(source))
+        slave_instance.write_attribute(dest, self.read_attribute(source))
       end
       # Call the mapping_block if one is supplied
       self.class.mapping_block.call(self, slave_instance) if self.class.mapping_block
+    end
+
+    def destroy_slave
+      return unless find_slave_instance
+      find_slave_instance.destroy
     end
   end
 end
