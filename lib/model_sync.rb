@@ -61,7 +61,8 @@ module ModelSync
     def perform_sync(slave_instance)
       # Update all the attributes which we've mapped
       self.class.mappings.each do |source, dest|
-        slave_instance.write_attribute(dest, self.read_attribute(source))
+        # In Rails 3, #write_attribute is private. That's just too bad.
+        slave_instance.send :write_attribute, dest, self.read_attribute(source)
       end
       # Call the mapping_block if one is supplied
       self.class.mapping_block.call(self, slave_instance) if self.class.mapping_block
